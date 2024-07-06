@@ -5,8 +5,12 @@ class Node:
     def __init__(self, value, neighbors) -> None:
         self.__value = value
         self.__id = Node.nodes
-        Node.nodes += 1        
-        self.__neighbors = list(neighbors)
+        Node.nodes += 1      
+
+#        if type(neighbors) != list:
+#            neighbors = [neighbors]  
+
+        self.__neighbors = neighbors
 
 
     @property
@@ -34,6 +38,10 @@ class Node:
         return self.__neighbors
 
 
+    def get_neighbors_id(self):
+        return [neighbor.id for neighbor in self.__neighbors]
+
+
     def add_neighbor(self, new_neighbors):
         
         if type(new_neighbors) != list:
@@ -52,9 +60,9 @@ class Node:
             if neighbor in self.__neighbors:
                 self.__neighbors.remove(neighbor)
 
-    
+
     def __str__(self):
-        return f"id - {self.__id} value - {self.__value} neighbors - {self.__neighbors}"
+        return f"id - {self.__id} value - {self.__value} neighbors - {self.get_neighbors_id()}"
 
 
 class Graph:
@@ -63,8 +71,18 @@ class Graph:
         self.nodes = {}
 
 
-    def create_node(self, value, *neighbors):
-        node = Node(value, neighbors)
+    def create_node(self, value, neighbors = None):
+        neighbor_nodes = []
+
+        if not neighbors:
+            neighbors = []
+
+        for neighbor in neighbors:
+
+            if neighbor in self.nodes:
+                neighbor_nodes.append(self.nodes[neighbor])
+
+        node = Node(value, neighbor_nodes)
         self.add_node(node)
 
 
@@ -74,7 +92,7 @@ class Graph:
             self.nodes[node.id] = node
                     
         for neighbor in node.neighbors:
-            self.nodes[neighbor].add_neighbor(node.id)
+            neighbor.add_neighbor(node)
 
 
     def remove_node(self, node_id):
@@ -84,14 +102,17 @@ class Graph:
             del self.nodes[node]
         
         for neighbor in node.neighbors:
-            self.nodes[neighbor.id].remove_neighbor(node.id)
+            neighbor.remove_neighbor(node)
 
     
     def __str__(self):
         string = ""
+
         for node in self.nodes.values():
             string = f"{string}{str(node)}\n"
         
+        string = string.strip()
+
         return string
 
 
@@ -99,8 +120,8 @@ def main():
     g = Graph()
 
     g.create_node(5)
-    g.create_node(5, 1)
-    g.create_node(5, 1, 2)
+    g.create_node(5, [1])
+    g.create_node(5, [1, 2])
 
     print(g)
 
