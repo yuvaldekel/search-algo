@@ -86,6 +86,14 @@ class Graph:
         for neighbor in node.neighbors:
             self.nodes[neighbor.id].remove_neighbor(node.id)
 
+    
+    def __str__(self):
+        string = ""
+        for node in self.nodes.values():
+            string = f"{string}{str(node)}\n"
+        
+        return string
+
 
 def main():
     g = Graph()
@@ -94,9 +102,7 @@ def main():
     g.create_node(5, 1)
     g.create_node(5, 1, 2)
 
-    print(g.nodes[1])
-    print(g.nodes[2])
-    print(g.nodes[3])
+    print(g)
 
 
 if __name__ == "__main__":
